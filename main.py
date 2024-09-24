@@ -24,7 +24,7 @@ async def root():
 async def get_post():
     return {"data": my_posts}
 
-@app.post("/posts")
+@app.post("/posts", status_code=status.HTTP_201_CREATED)
 def create_posts(post:Post):
     post_dict = post.dict()
     post_dict["id"] = randrange(0, 1000000)
@@ -49,3 +49,18 @@ def get_post(id:int, response: Response):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
                             detail=f"post with id {id} not found")
     return {"data": post}
+
+
+@app.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_post(id:int):
+    index = -1
+    for i, p in enumerate(my_posts):
+        if p["id"] == id:
+            index = i
+            break
+    if(index == -1):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
+                            detail=f"post with id {id} not found")
+    my_posts.pop(index)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
