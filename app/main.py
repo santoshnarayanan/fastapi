@@ -58,10 +58,8 @@ def get_latest_post():
 
 @app.get("/posts/{id}")
 def get_post(id:int, response: Response):
-    post = None
-    for p in my_posts:
-        if p["id"] == id:
-            post = p
+    cursor.execute("SELECT * FROM posts WHERE id = %s", (str(id)))
+    post = cursor.fetchone()
     if(not post):
         # response.status_code = 404
         # return {"message": f"post with id {id} not found"}
